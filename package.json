@@ -1,0 +1,16 @@
+{
+  "name": "blog-backend",
+  "version": "1.0.0",
+  "description": "Backend end points for a blogging site or smth idk",
+  "license": "ISC",
+  "author": "Hyoketsu",
+  "type": "module",
+  "main": "app.js",
+  "scripts": {
+    "server": "node --env-file-if-exists=.env --watch app.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "express": "^5.1.0"
+  }
+}
