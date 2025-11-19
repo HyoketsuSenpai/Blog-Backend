@@ -1,9 +1,7 @@
-import express, {type Express, Request, Response} from 'express';
+import express, { type Express } from 'express';
 
 const app: Express = express();
 
-app.get('/', (req: Request, res: Response) => {
-    res.end('hello world');
-});
+app.use(express.json());
 
-app.listen(3000);
+app.listen(Number(process.env.PORT) | 3000);
