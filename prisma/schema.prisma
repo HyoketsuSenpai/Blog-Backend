@@ -21,6 +21,20 @@ model Post {
   title String @db.VarChar(255)
   content String?
   published Boolean @default(false)
+  likes Like[]
+  comments Comment[]
+  author User @relation(fields: [authorId], references: [id])
+  authorId Int
+}
+
+model Comment {
+  id Int @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime
+  parent Post @relation(fields: [parentId], references: [id])
+  parentId Int
+  content String?
+  likes Like[]
   author User @relation(fields: [authorId], references: [id])
   authorId Int
 }
