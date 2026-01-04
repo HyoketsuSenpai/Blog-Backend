@@ -1,5 +1,5 @@
-import {Request, Response} from 'express';
-import db from '../config/db';
+import type {Request, Response} from 'express';
+import db from '../config/db.js';
 import bcrypt from "bcrypt";
 import * as jwt from 'jsonwebtoken';
 
@@ -85,3 +85,4 @@ async function SignIn(req: Request, res: Response){
 
 }
 
+export {SignUp, SignIn}

@@ -21,6 +21,7 @@
     "@types/bcrypt": "^6.0.0",
     "@types/express": "^5.0.5",
     "@types/jsonwebtoken": "^9.0.10",
-    "prisma": "^6.19.0"
+    "prisma": "^6.19.0",
+    "typescript": "^5.9.3"
   }
 }
