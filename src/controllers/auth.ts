@@ -1,7 +1,7 @@
 import type {Request, Response} from 'express';
 import db from '../config/db.js';
 import bcrypt from "bcrypt";
-import * as jwt from 'jsonwebtoken';
+import jwt from 'jsonwebtoken';
 
 async function signUp(req: Request, res: Response){
     const {name, email, password, confirmPassword} = req.body;
