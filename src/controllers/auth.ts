@@ -3,7 +3,7 @@ import db from '../config/db.js';
 import bcrypt from "bcrypt";
 import * as jwt from 'jsonwebtoken';
 
-async function SignUp(req: Request, res: Response){
+async function signUp(req: Request, res: Response){
     const {name, email, password, confirmPassword} = req.body;
     if(password !== confirmPassword){
         return res.status(422).json({message:"Password and confirmation Password must be equal"});
@@ -51,7 +51,7 @@ async function SignUp(req: Request, res: Response){
 
 }
 
-async function SignIn(req: Request, res: Response){
+async function signIn(req: Request, res: Response){
     const {email, password} = req.body;
     const user = await db.user.findUnique({
         where: {
@@ -85,4 +85,4 @@ async function SignIn(req: Request, res: Response){
 
 }
 
-export {SignUp, SignIn}
+export {signUp, signIn}
