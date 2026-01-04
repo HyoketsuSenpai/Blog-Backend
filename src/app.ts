@@ -1,7 +1,19 @@
-import express, { type Express } from 'express';
+import express, { type Express, type Request, type Response } from 'express';
+import {signUp, signIn} from './controllers/auth.js';
+import authenticateToken from './middlewares/auth_token.js';
 
 const app: Express = express();
 
 app.use(express.json());
+
+app.post('/signup', signUp);
+app.post('/login', signIn);
+
+app.use(authenticateToken);
+
+app.get('/protected', (req: Request, res: Response)=>{
+    return res.json({message:'safe and sound'});
+});
+
 
 app.listen(Number(process.env.PORT) | 3000);
