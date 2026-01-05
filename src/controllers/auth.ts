@@ -1,7 +1,10 @@
 import type {Request, Response} from 'express';
-import db from '../config/db.js';
+import db from '../config/db/prisma_db.js';
 import bcrypt from "bcrypt";
-import jwt from 'jsonwebtoken';
+import jwt, {type JwtPayload}from 'jsonwebtoken';
+import setRefreshToken from '../utils/set_refresh_token.js';
+import getRefreshToken from '../utils/get_refresh_token.js';
+import deleteRefreshToken from '../utils/delete_refresh_token.js';
 
 async function signUp(req: Request, res: Response){
     const {name, email, password, confirmPassword} = req.body;
@@ -32,8 +35,6 @@ async function signUp(req: Request, res: Response){
         }
     });
 
-    // create jwt and send both tokens
-    // add expiration and refresh tokens later
     const accessToken = jwt.sign(
         {
             id: user.id,
@@ -41,12 +42,25 @@ async function signUp(req: Request, res: Response){
             name: user.name ?? "Nameless Bum",
         },
         process.env.ACCESS_TOKEN_SECRET!,
+        {expiresIn: '30s'}
     );
 
+    const refreshToken = jwt.sign(
+        {
+            id: user.id,
+            email: user.email,
+            name: user.name ?? "Nameless Bum",
+        },
+        process.env.REFRESH_TOKEN_SECRET!,
+    )
+
+    // add refresh token to db
+    await setRefreshToken(refreshToken);
 
     return res.status(201).json({
         message: "User Created Sucessfully",
         accessToken,
+        refreshToken
     });
 
 }
@@ -75,14 +89,63 @@ async function signIn(req: Request, res: Response){
             email,
             name: user.name ?? "Nameless Bum",        
         },
-        process.env.ACCESS_TOKEN_SECRET!
+        process.env.ACCESS_TOKEN_SECRET!, 
+        {expiresIn: '30s'}
     );
+
+    const refreshToken = jwt.sign(
+        {
+            id: user.id,
+            email: user.email,
+            name: user.name ?? "Nameless Bum",
+        },
+        process.env.REFRESH_TOKEN_SECRET!,
+    )
+
+    // add refresh token to db
+    await setRefreshToken(refreshToken);
 
     res.status(200).json({
         message:'Logged in successfully',
-        accessToken
+        accessToken,
+        refreshToken
     });
 
 }
 
-export {signUp, signIn}
+async function token(req: Request, res: Response){
+    const refreshToken = req.body.token;
+    if (refreshToken == null) return res.sendStatus(401);
+    //check for refresh token in db
+    const exists = await getRefreshToken(refreshToken);
+
+    if(!exists){
+        return res.sendStatus(401);
+    }
+
+    const user = jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET!);
+    if (typeof user === 'string') {
+        return res.sendStatus(403);
+    }
+
+    const accessToken = jwt.sign(
+        {
+            id: user.id,
+            email: user.email,
+            name: user.name ?? "Nameless Bum",
+        },
+        process.env.ACCESS_TOKEN_SECRET!,
+        {expiresIn:'30s'}
+    );
+
+    return res.json({accessToken});
+}
+
+async function signOut(req: Request, res: Response){
+    const refreshToken = req.body.token;
+    // delete token from db
+    await deleteRefreshToken(refreshToken);
+    res.sendStatus(203);
+}
+
+export {signUp, signIn, token, signOut}
