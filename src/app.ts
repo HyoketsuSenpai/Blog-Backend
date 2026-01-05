@@ -1,6 +1,9 @@
 import express, { type Express, type Request, type Response } from 'express';
+import {connectRedis} from './config/db/redis_db.js'
 import {signUp, signIn} from './controllers/auth.js';
 import authenticateToken from './middlewares/auth_token.js';
+
+connectRedis();
 
 const app: Express = express();
 
