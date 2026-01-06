@@ -29,4 +29,4 @@ app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
   res.status(500).json({ message: 'Internal Server Error' });
 });
 
-app.listen(Number(process.env.PORT) | 3000);
+app.listen(Number(process.env.PORT) || 3000);
