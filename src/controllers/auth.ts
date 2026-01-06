@@ -2,17 +2,14 @@ import type {Request, Response} from 'express';
 import db from '../config/db/prisma_db.js';
 import bcrypt from "bcrypt";
 import jwt, {type JwtPayload}from 'jsonwebtoken';
+
 import setRefreshToken from '../utils/set_refresh_token.js';
 import getRefreshToken from '../utils/get_refresh_token.js';
 import deleteRefreshToken from '../utils/delete_refresh_token.js';
 
 async function signUp(req: Request, res: Response){
     const {name, email, password, confirmPassword} = req.body;
-    if(password !== confirmPassword){
-        return res.status(422).json({message:"Password and confirmation Password must be equal"});
-    }
-    
-    // Do email and password validation
+
     // sanitize that shi before anything bruh
 
     const exist = await db.user.findUnique({
@@ -67,6 +64,7 @@ async function signUp(req: Request, res: Response){
 
 async function signIn(req: Request, res: Response){
     const {email, password} = req.body;
+
     const user = await db.user.findUnique({
         where: {
             email
@@ -115,7 +113,8 @@ async function signIn(req: Request, res: Response){
 
 async function token(req: Request, res: Response){
     const refreshToken = req.body.token;
-    if (refreshToken == null) return res.sendStatus(401);
+
+    // if (refreshToken == null) return res.sendStatus(401);
     //check for refresh token in db
     const exists = await getRefreshToken(refreshToken);
 
