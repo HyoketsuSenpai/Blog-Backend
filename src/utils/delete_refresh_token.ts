@@ -5,7 +5,7 @@ import crypto from 'crypto';
 async function deleteRefreshToken(refreshToken:string) {
 
     const hashedToken = crypto.createHash('sha256').update(refreshToken).digest('hex');
-    redis.del(`refresh:${hashedToken}`);
+    await redis.del(`refresh:${hashedToken}`);
 
 }
 
