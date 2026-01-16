@@ -1,9 +1,7 @@
 import {Router} from 'express';
 import { signUp, signIn, token, signOut } from '../controllers/auth.js';
 import validateBody from '../middlewares/validate_body.js';
-import authSchema from '../schemas/auth.schema.js';
-
-const { signUpSchema, signInSchema, tokenSchema, logOutSchema } = authSchema;
+import { signUpSchema, signInSchema, tokenSchema, logOutSchema } from '../schemas/auth.schema.js';
 
 const router = Router();
 

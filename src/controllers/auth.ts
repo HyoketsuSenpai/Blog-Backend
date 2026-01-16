@@ -1,7 +1,7 @@
 import type {Request, Response} from 'express';
 import db from '../config/db/prisma_db.js';
 import bcrypt from "bcrypt";
-import jwt, {JsonWebTokenError, TokenExpiredError, type JwtPayload}from 'jsonwebtoken';
+import jwt, {JsonWebTokenError, TokenExpiredError, type JwtPayload} from 'jsonwebtoken';
 
 import setRefreshToken from '../utils/set_refresh_token.js';
 import getRefreshToken from '../utils/get_refresh_token.js';

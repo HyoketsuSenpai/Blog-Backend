@@ -40,4 +40,4 @@ const logOutSchema = z.object({
 })
 .strict();
 
-export default {signUpSchema, signInSchema, tokenSchema, logOutSchema}
+export {signUpSchema, signInSchema, tokenSchema, logOutSchema}
