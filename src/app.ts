@@ -2,6 +2,7 @@ import express, { type Express, type NextFunction, type Request, type Response }
 import {connectRedis} from './config/db/redis_db.js'
 import authenticateToken from './middlewares/auth_token.js';
 import authRouter from './routes/auth.js';
+import postRouter from './routes/post.js';
 
 connectRedis();
 
@@ -16,6 +17,8 @@ app.use(authenticateToken);
 app.get('/protected', (req: Request, res: Response)=>{
     return res.json({message:'safe and sound'});
 });
+
+app.use(postRouter);
 
 app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
   console.error(err);
