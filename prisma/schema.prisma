@@ -6,7 +6,7 @@
 
 generator client {
   provider = "prisma-client-js"
-//  output   = "../generated/prisma"
+  //  output   = "../generated/prisma"
 }
 
 datasource db {
@@ -15,42 +15,70 @@ datasource db {
 }
 
 model Post {
-  id Int @id @default(autoincrement())
-  createdAt DateTime @default(now())
-  updatedAt DateTime
-  title String @db.VarChar(255)
-  content String?
-  published Boolean @default(false)
-  likes Like[]
-  comments Comment[]
-  author User @relation(fields: [authorId], references: [id])
-  authorId Int
+  id        Int       @id @default(autoincrement())
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  title     String    @db.VarChar(255)
+  content   String?   @db.Text
+  likes     Like[]
+  comments  Comment[]
+  author    User      @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  authorId  Int
+
+  @@map("posts")
 }
 
 model Comment {
-  id Int @id @default(autoincrement())
-  createdAt DateTime @default(now())
-  updatedAt DateTime
-  parent Post @relation(fields: [parentId], references: [id])
-  parentId Int
-  content String?
-  likes Like[]
-  author User @relation(fields: [authorId], references: [id])
-  authorId Int
+  id              Int       @id @default(autoincrement())
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+  parentPost      Post      @relation(fields: [parentPostId], references: [id], onDelete: Cascade)
+  parentPostId    Int
+  parentComment   Comment?  @relation("CommentToComment", fields: [parentCommentId], references: [id])
+  parentCommentId Int?
+  content         String    @db.Text
+  likes           Like[]
+  author          User      @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  authorId        Int
+  replies         Comment[] @relation("CommentToComment")
+
+  @@map("comments")
 }
 
 model Profile {
-  id Int @id @default(autoincrement())
-  bio String?
-  user User @relation(fields: [userId], references: [id])
-  userId Int @unique
+  id     Int     @id @default(autoincrement())
+  bio    String?
+  user   User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId Int     @unique
+
+  @@map("profiles")
 }
 
 model User {
-  id Int @id @default(autoincrement())
-  email String @unique
+  id       Int       @id @default(autoincrement())
+  email    String    @unique
   password String
-  name String?
-  posts Post[]
-  profile Profile?
+  name     String?
+  posts    Post[]
+  comments Comment[]
+  likes    Like[]
+  profile  Profile?
+
+  @@map("users")
+}
+
+model Like {
+  id     Int  @id @default(autoincrement())
+  user   User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId Int
+
+  post   Post? @relation(fields: [postId], references: [id], onDelete: Cascade)
+  postId Int?
+
+  comment   Comment? @relation(fields: [commentId], references: [id], onDelete: Cascade)
+  commentId Int?
+
+  @@unique([userId, postId])
+  @@unique([userId, commentId])
+  @@map("likes")
 }
